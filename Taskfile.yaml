@@ -1,0 +1,62 @@
+version: "3"
+
+tasks:
+  install:
+    desc: Install all dependencies (backend + frontend)
+    cmds:
+      - cd backend && uv sync --extra dev
+      - cd frontend && pnpm install
+
+  up:
+    desc: Start MongoDB
+    cmds:
+      - docker run -d --name py_app_mongo -p 27017:27017
+          -e MONGO_INITDB_ROOT_USERNAME=root
+          -e MONGO_INITDB_ROOT_PASSWORD=password
+          mongo:7
+
+  down:
+    desc: Stop MongoDB
+    cmds:
+      - docker stop py_app_mongo && docker rm py_app_mongo
+
+  backend:dev:
+    desc: Run backend dev server (requires MongoDB)
+    dir: backend
+    env:
+      LOG_LEVEL: DEBUG
+      ENVIRONMENT: dev
+    cmds:
+      - uv run start
+
+  frontend:dev:
+    desc: Run frontend dev server
+    dir: frontend
+    cmds:
+      - pnpm dev
+
+  test:
+    desc: Run backend tests
+    dir: backend
+    env:
+      MONGO_DB_NAME: test_admin_template
+    cmds:
+      - uv run --extra dev python -m pytest {{.CLI_ARGS}}
+
+  lint:
+    desc: Lint backend
+    dir: backend
+    cmds:
+      - uv run ruff check src/ tests/
+
+  frontend:typecheck:
+    desc: TypeScript typecheck
+    dir: frontend
+    cmds:
+      - pnpm typecheck
+
+  frontend:build:
+    desc: Build frontend for production
+    dir: frontend
+    cmds:
+      - pnpm build

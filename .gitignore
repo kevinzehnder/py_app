@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+dist/
+.env
+
+# uv
+backend/uv.lock
+
+# Node
+node_modules/
+frontend/build/
+frontend/.npmrc
+
+# pnpm
+pnpm-lock.yaml
+
+# Misc
+.DS_Store
+*.swp

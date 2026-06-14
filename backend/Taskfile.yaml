@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  install:
+    desc: Install dependencies
+    cmds:
+      - uv sync --extra dev
+
+  dev:
+    desc: Run dev server
+    env:
+      LOG_LEVEL: DEBUG
+      ENVIRONMENT: dev
+    cmds:
+      - uv run start
+
+  test:
+    desc: Run tests
+    env:
+      MONGO_DB_NAME: test_admin_template
+    cmds:
+      - uv run --extra dev python -m pytest {{.CLI_ARGS}}
+
+  lint:
+    desc: Lint code
+    cmds:
+      - uv run ruff check src/ tests/
+
+  fmt:
+    desc: Format code
+    cmds:
+      - uv run ruff format src/ tests/
