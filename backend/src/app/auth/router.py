@@ -1,20 +1,19 @@
-"""JWT authentication router."""
+"""Auth endpoints."""
 
 from datetime import datetime, timedelta, timezone
 
 import bcrypt
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from jose import JWTError, jwt
+from fastapi.security import OAuth2PasswordRequestForm
+from jose import jwt
 from pydantic import BaseModel
 
+from app.auth.dependencies import CurrentUser, User
 from app.core.config import get_settings
 
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 logger = structlog.get_logger(__name__)
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 
 class TokenResponse(BaseModel):
@@ -22,94 +21,53 @@ class TokenResponse(BaseModel):
     token_type: str = "bearer"
 
 
-class MeResponse(BaseModel):
-    subject: str
-    email: str
-    name: str
-    role: str
+# ---------------------------------------------------------------------------
+# Demo user — no database. Replace with a DB lookup when you need real users.
+# Credentials are read from settings so they can be overridden via env vars.
+# ---------------------------------------------------------------------------
 
-
-def _hash_password(password: str) -> bytes:
-    return bcrypt.hashpw(password.encode(), bcrypt.gensalt())
-
-
-def _check_password(password: str, hashed: bytes) -> bool:
-    return bcrypt.checkpw(password.encode(), hashed)
-
-
-# TODO: replace with DB lookup
-_DEMO_PASSWORD_HASH: bytes | None = None
+_demo_hash: bytes | None = None
 
 
 def _get_demo_hash() -> bytes:
-    """Lazy-init the demo password hash to avoid slow import-time hashing."""
-    global _DEMO_PASSWORD_HASH
-    if _DEMO_PASSWORD_HASH is None:
-        _DEMO_PASSWORD_HASH = _hash_password("secret")
-    return _DEMO_PASSWORD_HASH
+    global _demo_hash
+    if _demo_hash is None:
+        settings = get_settings()
+        _demo_hash = bcrypt.hashpw(settings.DEMO_PASSWORD.encode(), bcrypt.gensalt())
+    return _demo_hash
 
 
-DEMO_USER = {
-    "email": "admin@example.com",
-    "name": "Admin",
-    "role": "admin",
-}
+def _check_demo(email: str, password: str) -> bool:
+    settings = get_settings()
+    return email == settings.DEMO_EMAIL and bcrypt.checkpw(password.encode(), _get_demo_hash())
 
 
-def create_access_token(data: dict) -> str:
+def _create_token(email: str, name: str, role: str) -> str:
     settings = get_settings()
     expire = datetime.now(timezone.utc) + timedelta(minutes=settings.JWT_EXPIRE_MINUTES)
     return jwt.encode(
-        {**data, "exp": expire},
+        {"sub": email, "name": name, "role": role, "exp": expire},
         settings.JWT_SECRET_KEY,
         algorithm=settings.JWT_ALGORITHM,
     )
 
 
-def get_current_user(token: str = Depends(oauth2_scheme)) -> MeResponse:
-    settings = get_settings()
-    try:
-        payload = jwt.decode(
-            token,
-            settings.JWT_SECRET_KEY,
-            algorithms=[settings.JWT_ALGORITHM],
-        )
-        email: str = payload.get("sub", "")
-    except JWTError as e:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
-            headers={"WWW-Authenticate": "Bearer"},
-        ) from e
-
-    return MeResponse(
-        subject=email,
-        email=email,
-        name=payload.get("name", ""),
-        role=payload.get("role", "viewer"),
-    )
-
+# ---------------------------------------------------------------------------
+# Endpoints
+# ---------------------------------------------------------------------------
 
 @router.post("/login", response_model=TokenResponse)
 def login(form: OAuth2PasswordRequestForm = Depends()) -> TokenResponse:
-    # TODO: replace with DB lookup
-    user = DEMO_USER
-    if form.username != user["email"] or not _check_password(form.password, _get_demo_hash()):
+    settings = get_settings()
+    if not _check_demo(form.username, form.password):
         logger.warning("login failed", username=form.username)
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid credentials",
-        )
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
-    token = create_access_token({
-        "sub": user["email"],
-        "name": user["name"],
-        "role": user["role"],
-    })
-    logger.info("login success", email=user["email"])
+    token = _create_token(email=settings.DEMO_EMAIL, name=settings.DEMO_NAME, role=settings.DEMO_ROLE)
+    logger.info("login success", email=settings.DEMO_EMAIL)
     return TokenResponse(access_token=token)
 
 
-@router.get("/me", response_model=MeResponse)
-def me(current_user: MeResponse = Depends(get_current_user)) -> MeResponse:
-    return current_user
+@router.get("/me", response_model=User)
+def me(user: CurrentUser) -> User:
+    return user

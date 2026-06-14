@@ -1,8 +1,8 @@
 import fastapi
-from fastapi import HTTPException
+from fastapi import Depends, HTTPException
 from pymongo.errors import DuplicateKeyError
 
-from app.auth.router import get_current_user, MeResponse
+from app.auth.dependencies import get_current_user
 from app.items.schemas import Item, ItemBase
 from app.pyobjectid import PyObjectId
 from app.query import FilterQuery, RangeQuery, SortQuery
@@ -11,6 +11,7 @@ router = fastapi.APIRouter(
     prefix="/api/items",
     tags=["items"],
     responses={404: {"description": "item not found"}},
+    dependencies=[Depends(get_current_user)],
 )
 
 
@@ -32,10 +33,7 @@ def get_item_by_id(id: PyObjectId) -> Item:
 
 
 @router.post("/", status_code=201, response_description="created item")
-def create_item(
-    new_item: ItemBase,
-    _: MeResponse = fastapi.Depends(get_current_user),
-) -> Item:
+def create_item(new_item: ItemBase) -> Item:
     try:
         return Item.create(new_item)
     except DuplicateKeyError as e:
@@ -43,17 +41,10 @@ def create_item(
 
 
 @router.put("/{id}", response_description="updated item")
-def update_item(
-    id: PyObjectId,
-    updated_item: ItemBase,
-    _: MeResponse = fastapi.Depends(get_current_user),
-) -> Item:
+def update_item(id: PyObjectId, updated_item: ItemBase) -> Item:
     return Item.update(objectid=id, data=updated_item)
 
 
 @router.delete("/{id}", response_description="deleted item")
-def delete_item(
-    id: PyObjectId,
-    _: MeResponse = fastapi.Depends(get_current_user),
-) -> Item:
+def delete_item(id: PyObjectId) -> Item:
     return Item.delete(id)

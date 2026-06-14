@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
 
+    # Demo user — no DB, override via env vars for real deployments
+    DEMO_EMAIL: str = "admin@example.com"
+    DEMO_PASSWORD: str = "secret"
+    DEMO_NAME: str = "Admin"
+    DEMO_ROLE: str = "admin"
+
     model_config = SettingsConfigDict(
         env_prefix="",
         env_file=".env",
