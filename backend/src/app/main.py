@@ -1,6 +1,12 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+# Configure logging before any app imports — ensures correct format in all
+# processes, including uvicorn reload workers that never run __main__.py.
+from app.core.logs import configure_logging, get_log_format_from_env, get_log_level_from_env
+
+configure_logging(format=get_log_format_from_env(), log_level=get_log_level_from_env())
+
 import fastapi
 import structlog
 from fastapi import Request
