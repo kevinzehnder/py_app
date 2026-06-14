@@ -7,9 +7,6 @@ __pycache__/
 dist/
 .env
 
-# uv
-backend/uv.lock
-
 # Node
 node_modules/
 frontend/build/
@@ -17,6 +14,9 @@ frontend/.npmrc
 
 # pnpm
 pnpm-lock.yaml
+
+# devbox
+.devbox/
 
 # Misc
 .DS_Store

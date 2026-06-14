@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/0.13.1/.schema/devbox.schema.json",
+  "packages": [
+    "uv@latest",
+    "go-task@latest",
+    "ruff@latest",
+    "nodejs@22",
+    "pnpm@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "task install",
+      "source backend/.venv/bin/activate"
+    ]
+  }
+}
