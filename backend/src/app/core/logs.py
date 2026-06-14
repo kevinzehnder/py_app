@@ -5,12 +5,12 @@ from __future__ import annotations
 import logging
 import logging.config
 import os
-from typing import Literal
+from typing import Any, Literal, cast
 
 import orjson
 import structlog
 
-DEFAULT_NOISY_LOGGERS = {
+DEFAULT_NOISY_LOGGERS: dict[str, int | str] = {
     "uvicorn": "INFO",
     "uvicorn.error": "INFO",
     "uvicorn.access": "WARNING",
@@ -22,7 +22,7 @@ DEFAULT_NOISY_LOGGERS = {
 _configured = False
 
 
-def orjson_dump_decoded(obj: object, *, default: object) -> str:
+def orjson_dump_decoded(obj: object, *, default: Any) -> str:
     """Serialize log payloads with orjson and return text."""
     return orjson.dumps(
         obj,
@@ -37,7 +37,7 @@ def _normalize_level(log_level: int | str) -> int:
     return logging._nameToLevel.get(log_level.upper(), logging.INFO)
 
 
-def _shared_processors(use_utc: bool) -> list[object]:
+def _shared_processors(use_utc: bool) -> list[structlog.types.Processor]:
     return [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_logger_name,
@@ -141,7 +141,7 @@ def get_log_format_from_env() -> Literal["console", "json"]:
     """Resolve log format without needing full settings validation."""
     log_format = os.getenv("LOG_FORMAT")
     if log_format in {"console", "json"}:
-        return log_format
+        return cast(Literal["console", "json"], log_format)
     if os.getenv("LOG_JSON", "0") in {"1", "true", "TRUE", "yes", "YES"}:
         return "json"
     return "console"

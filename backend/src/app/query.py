@@ -62,21 +62,23 @@ class FilterQueryModel(BaseModel):
 
 
 async def parse_range_query(
-    range: str = Query(default='{"page": 0, "perPage": 10}'),
+    page: int = Query(default=0),
+    perPage: int = Query(default=10),
 ) -> RangeQueryModel:
-    return RangeQueryModel.model_validate_json(range)
+    return RangeQueryModel(page=page, perPage=perPage)
 
 
 async def parse_sort_query(
-    sort: str = Query(default='{"field": "_id", "order": 1}'),
+    sort_field: str = Query(default="_id"),
+    sort_order: int = Query(default=1),
 ) -> SortQueryModel:
-    return SortQueryModel.model_validate_json(sort)
+    return SortQueryModel(field=sort_field, order=sort_order)
 
 
 async def parse_filter_query(
-    filter: str = Query(default="{}"),
+    id: list[str] | None = Query(default=None),
 ) -> FilterQueryModel:
-    return FilterQueryModel.model_validate_json(filter)
+    return FilterQueryModel(id=id)
 
 
 RangeQuery = Annotated[RangeQueryModel, Depends(parse_range_query)]

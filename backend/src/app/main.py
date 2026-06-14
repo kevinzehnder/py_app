@@ -23,9 +23,16 @@ from app.schemas import KyException
 
 @asynccontextmanager
 async def lifespan(app: fastapi.FastAPI) -> AsyncGenerator:
+    import app.database as db
+    from app.auth.providers import get_provider
+
     logger = structlog.get_logger().bind(context="main")
     logger.info("starting application")
+    provider = get_provider()
+    await provider.startup()
+    logger.info("auth provider ready", provider=type(provider).__name__)
     yield
+    db.close_client()
     logger.info("shutting down application")
 
 
@@ -47,7 +54,7 @@ app.include_router(auth_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],

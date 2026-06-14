@@ -18,6 +18,11 @@ class Settings(BaseSettings):
     MONGO_DB_NAME: str = "admin_template"
     MONGO_SERVER_SELECTION_TIMEOUT_MS: int = 5_000
 
+    # Auth provider selection
+    AUTH_PROVIDER: Literal["demo", "azure_ad", "auth0"] = "demo"
+    AUTH_DISABLED: bool = False  # inject fake admin, skip token checks (dev only)
+
+    # Demo provider — HS256 JWT, single hardcoded user
     JWT_SECRET_KEY: str = "change-me-in-production"
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_MINUTES: int = 60 * 24 * 7  # 1 week
@@ -27,6 +32,15 @@ class Settings(BaseSettings):
     DEMO_PASSWORD: str = "secret"
     DEMO_NAME: str = "Admin"
     DEMO_ROLE: str = "admin"
+
+    # Azure AD provider
+    AZURE_APP_CLIENT_ID: str = ""
+    AZURE_TENANT_ID: str = ""
+
+    # Auth0 provider
+    AUTH0_DOMAIN: str = ""      # e.g. "myapp.eu.auth0.com"
+    AUTH0_AUDIENCE: str = ""
+    AUTH0_ROLES_CLAIM: str = "roles"
 
     model_config = SettingsConfigDict(
         env_prefix="",

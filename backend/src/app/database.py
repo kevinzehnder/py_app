@@ -60,5 +60,12 @@ def create_collection_indices() -> None:
 # Initialize client on module import
 try:
     client = get_mongo()
-except Exception:
+except Exception as e:
+    logger.error("MongoDB connection failed, exiting", error=repr(e))
     sys.exit(1)
+
+
+def close_client() -> None:
+    """Close the MongoDB client. Call from app lifespan shutdown."""
+    client.close()
+    logger.info("MongoDB connection closed")

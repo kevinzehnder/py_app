@@ -30,4 +30,4 @@ def test_me_with_token(client):
     assert response.status_code == 200
     data = response.json()
     assert data["email"] == "admin@example.com"
-    assert data["role"] == "admin"
+    assert data["roles"] == ["admin"]

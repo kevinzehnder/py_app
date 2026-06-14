@@ -14,8 +14,7 @@ export type ItemCreate = {
 };
 
 export async function listItems(page = 0, perPage = 20): Promise<{ items: Item[]; total: number }> {
-  const range = JSON.stringify({ page, perPage });
-  const res = await apiFetch(`/api/items/?range=${encodeURIComponent(range)}`);
+  const res = await apiFetch(`/api/items/?page=${page}&perPage=${perPage}`);
   if (!res.ok) throw new Error(`${res.status}`);
   const total = parseInt(res.headers.get('X-Total-Count') ?? '0', 10);
   const items = (await res.json()) as Item[];

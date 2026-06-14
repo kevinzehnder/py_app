@@ -90,7 +90,7 @@ class KyDocument(MongoModel):
             {"_id": objectid},
             {"$set": data.to_mongo()},
         )
-        if not update_successful:
+        if update_successful.modified_count == 0:
             raise KyException("failed to update the document", 500)
 
         return cls.get_by_id(objectid=objectid)
