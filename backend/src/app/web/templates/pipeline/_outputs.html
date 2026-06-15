@@ -1,0 +1,17 @@
+{% if render_error %}
+<div class="padding round border" style="border-color: var(--error); background-color: var(--error-container); color: var(--on-error-container);">
+  <i>error</i> <span>{{ render_error }}</span>
+</div>
+{% endif %}
+
+{% if job.outputs %}
+<nav class="wrap">
+  {% for fmt, name in job.outputs.items() %}
+  <a class="button border" href="/web/pipeline/{{ job.id }}/download/{{ name }}">
+    <i>download</i><span>{{ fmt | upper }}</span>
+  </a>
+  {% endfor %}
+</nav>
+{% else %}
+<p style="color: var(--on-surface-variant);">No output rendered yet.</p>
+{% endif %}

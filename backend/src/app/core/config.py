@@ -49,6 +49,17 @@ class Settings(BaseSettings):
     AZURE_OPENAI_API_VERSION: str = ""       # optional for legacy non-v1 endpoints
     AZURE_OPENAI_DEPLOYMENT: str = ""        # deployment name, e.g. "gpt-5-mini"
 
+    # AGOBIS (Swiss Grundbuch) — pi-tools client
+    AGOBIS_USER: str = ""
+    AGOBIS_PASS: str = ""
+    # Token+cookie cache so repeated calls skip the full Keycloak login.
+    AGOBIS_SESSION_FILE: str = "~/.cache/py_app/agobis-session.json"
+
+    # Kaufvertrag pipeline (pi-tools) — filesystem job store + document reader
+    PIPELINE_DATA_DIR: str = "./var/pipeline"  # one dir per job (sources + artifacts)
+    DOCUMENT_READER_METHOD: Literal["ocr", "vlm", "llm-server"] = "ocr"
+    LLM_SERVER_URL: str = ""  # only used when DOCUMENT_READER_METHOD == "llm-server"
+
     model_config = SettingsConfigDict(
         env_prefix="",
         env_file=".env",

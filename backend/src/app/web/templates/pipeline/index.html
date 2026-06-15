@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Kaufvertrag Pipeline · {{ app_name | default("App") }}{% endblock %}
+
+{% block content %}
+<h4>Kaufvertrag Pipeline</h4>
+<p>Upload Makler source documents → extract → validate → render ODT/PDF.</p>
+
+<article class="round border">
+  <h6>New job</h6>
+  <form
+    hx-post="/web/pipeline/"
+    hx-encoding="multipart/form-data"
+    hx-indicator="#create-spinner"
+    hx-disabled-elt="find button">
+    <div class="field label border">
+      <input type="file" name="files" multiple required />
+      <label>Source documents (PDF, image, .md/.txt)</label>
+    </div>
+    <nav>
+      <button type="submit">
+        <i>upload</i>
+        <span>Create &amp; extract</span>
+      </button>
+      <progress id="create-spinner" class="circle small htmx-indicator"></progress>
+    </nav>
+    <p style="font-size: 0.8rem; color: var(--on-surface-variant);">
+      Ingestion (OCR/VLM) and LLM extraction run on submit and may take a while.
+    </p>
+  </form>
+</article>
+
+<article class="round border">
+  <h6>Jobs</h6>
+  {% if not jobs %}
+  <p style="color: var(--on-surface-variant);">No jobs yet.</p>
+  {% else %}
+  <table class="border">
+    <thead>
+      <tr><th>Created</th><th>Status</th><th>Sources</th><th>Job</th></tr>
+    </thead>
+    <tbody>
+      {% for job in jobs %}
+      <tr>
+        <td>{{ job.created_at.strftime("%Y-%m-%d %H:%M") }}</td>
+        <td><span class="chip small">{{ job.status }}</span></td>
+        <td>{{ job.source_files | length }}</td>
+        <td><a class="link" href="/web/pipeline/{{ job.id }}">{{ job.id[:8] }}</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</article>
+{% endblock %}

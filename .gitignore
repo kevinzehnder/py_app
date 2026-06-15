@@ -18,6 +18,10 @@ pnpm-lock.yaml
 # devbox
 .devbox/
 
+# Pipeline job artifacts
+var/
+backend/var/
+
 # Misc
 .DS_Store
 *.swp

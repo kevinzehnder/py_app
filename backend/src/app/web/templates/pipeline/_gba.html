@@ -1,0 +1,46 @@
+<form
+  hx-post="/web/pipeline/{{ job.id }}/gba"
+  hx-target="#gba-panel"
+  hx-swap="innerHTML"
+  hx-indicator="#gba-spinner"
+  hx-disabled-elt="find button">
+  <div class="grid">
+    <div class="s12 m6 field label border">
+      <input name="gemeinde" value="{{ job.data.kaufobjekt.gemeinde or 'Neuenhof' }}" />
+      <label>Gemeinde</label>
+    </div>
+    <div class="s12 m6 field label border">
+      <input name="nummer" value="{{ job.data.kaufobjekt.grundstueck_nr or '119' }}" />
+      <label>Grundstück-Nr.</label>
+    </div>
+  </div>
+  <nav>
+    <button class="border" type="submit"><i>download</i><span>Fetch &amp; clean GBA</span></button>
+    <progress id="gba-spinner" class="circle small htmx-indicator"></progress>
+  </nav>
+</form>
+
+{% if gba_error %}
+<div class="padding round border" style="border-color: var(--error); background-color: var(--error-container); color: var(--on-error-container);">
+  <i>error</i> <span>{{ gba_error }}</span>
+</div>
+{% endif %}
+
+{% if job.gba %}
+<div class="divider"></div>
+<table class="border">
+  <thead><tr><th>Gemeinde</th><th>Nr.</th><th>Files</th></tr></thead>
+  <tbody>
+    {% for g in job.gba %}
+    <tr>
+      <td>{{ g.gemeinde }}</td>
+      <td>{{ g.nummer }}</td>
+      <td>
+        <a class="link" href="/web/pipeline/{{ job.id }}/download/{{ g.rtf }}">RTF</a> ·
+        <a class="link" href="/web/pipeline/{{ job.id }}/download/{{ g.docx }}">cleaned DOCX</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}

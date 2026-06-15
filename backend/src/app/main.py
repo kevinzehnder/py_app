@@ -14,6 +14,7 @@ from app.auth.router import router as auth_router
 from app.core.config import get_settings
 from app.middlewares import LoggerMiddleware
 from app.schemas import KyException
+from app.web.pipeline import router as pipeline_router
 from app.web.router import STATIC_DIR as WEB_STATIC_DIR
 from app.web.router import router as web_router
 
@@ -56,6 +57,7 @@ app = fastapi.FastAPI(
 
 app.include_router(auth_router)
 app.include_router(web_router)
+app.include_router(pipeline_router)
 
 # The items example CRUD depends on MongoDB — only register it when enabled.
 if settings.MONGO_ENABLED:

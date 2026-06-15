@@ -18,7 +18,7 @@ from pathlib import Path
 
 import fastapi
 from fastapi import Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, Response
 from fastapi.templating import Jinja2Templates
 
 from app.core.config import get_settings
@@ -65,3 +65,20 @@ async def ai_hello(request: Request) -> HTMLResponse:
         context["error"] = str(exc)
 
     return templates.TemplateResponse(request, "partials/ai_result.html", context)
+
+
+@router.get("/agobis/rtf")
+async def agobis_rtf() -> Response:
+    """Fetch the Grundbuchauszug RTF for the test parcel (Neuenhof 119).
+
+    Returns the binary RTF as a file download. AGOBIS is optional (requires
+    pi-tools + AGOBIS settings), so import lazily.
+    """
+    from app.ai import fetch_grundstueck_rtf
+
+    result = await fetch_grundstueck_rtf()
+    return Response(
+        content=result.content,
+        media_type="application/rtf",
+        headers={"Content-Disposition": f'attachment; filename="{result.filename}"'},
+    )

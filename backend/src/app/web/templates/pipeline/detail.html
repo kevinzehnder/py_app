@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Job {{ job.id[:8] }} · {{ app_name | default("App") }}{% endblock %}
+
+{% block content %}
+<nav>
+  <a class="link" href="/web/pipeline/"><i>arrow_back</i><span>All jobs</span></a>
+</nav>
+
+<h4>Job {{ job.id[:8] }} <span class="chip small">{{ job.status }}</span></h4>
+
+{% if job.error %}
+<div class="padding round border" style="border-color: var(--error); background-color: var(--error-container); color: var(--on-error-container);">
+  <i>error</i> <span>{{ job.error }}</span>
+</div>
+{% endif %}
+
+<div class="grid">
+  <!-- sources -->
+  <article class="s12 m4 round border">
+    <h6>Source documents</h6>
+    {% if job.source_files %}
+    <ul>{% for f in job.source_files %}<li>{{ f }}</li>{% endfor %}</ul>
+    {% if job.source_markdown %}
+    <a class="link" href="/web/pipeline/{{ job.id }}/download/{{ job.source_markdown }}">
+      <i>description</i><span>source.md</span></a>
+    {% endif %}
+    {% else %}
+    <p style="color: var(--on-surface-variant);">None.</p>
+    {% endif %}
+    <div class="divider"></div>
+    <button class="border"
+      hx-post="/web/pipeline/{{ job.id }}/extract"
+      hx-target="#editor-wrap"
+      hx-swap="outerHTML"
+      hx-indicator="#extract-spinner"
+      hx-disabled-elt="this">
+      <i>auto_awesome</i><span>Re-run extraction</span>
+    </button>
+    <progress id="extract-spinner" class="circle small htmx-indicator"></progress>
+  </article>
+
+  <!-- GBA -->
+  <article class="s12 m8 round border">
+    <h6>Grundbuchauszug (AGOBIS)</h6>
+    <div id="gba-panel">
+      {% include "pipeline/_gba.html" %}
+    </div>
+  </article>
+</div>
+
+<!-- editor -->
+{% include "pipeline/_editor.html" %}
+
+<!-- outputs -->
+<article class="round border">
+  <h6>Render</h6>
+  <nav>
+    <button hx-post="/web/pipeline/{{ job.id }}/render?to=pdf" hx-target="#outputs" hx-swap="innerHTML"
+      hx-indicator="#render-spinner" hx-disabled-elt="this">
+      <i>picture_as_pdf</i><span>Render PDF</span>
+    </button>
+    <button class="border" hx-post="/web/pipeline/{{ job.id }}/render?to=odt" hx-target="#outputs" hx-swap="innerHTML"
+      hx-indicator="#render-spinner" hx-disabled-elt="this">
+      <i>article</i><span>Render ODT</span>
+    </button>
+    <progress id="render-spinner" class="circle small htmx-indicator"></progress>
+  </nav>
+  <div id="outputs" style="margin-top: 0.75rem;">
+    {% include "pipeline/_outputs.html" %}
+  </div>
+</article>
+{% endblock %}

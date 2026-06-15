@@ -1,0 +1,151 @@
+<div id="editor-wrap">
+<article class="round border" x-data="{ tab: 'form' }">
+  <h6>Validate &amp; edit</h6>
+
+  {% if validated %}
+  <div class="padding round" style="background-color: var(--primary-container); color: var(--on-primary-container);">
+    <i>check_circle</i> <span>Saved — job marked validated.</span>
+  </div>
+  {% endif %}
+  {% if validation_error %}
+  <div class="padding round border" style="border-color: var(--error); background-color: var(--error-container); color: var(--on-error-container);">
+    <i>error</i> <span>{{ validation_error }}</span>
+  </div>
+  {% endif %}
+
+  <div class="tabs">
+    <a :class="tab === 'form' ? 'active' : ''" @click="tab = 'form'"><i>edit</i><span>Form</span></a>
+    <a :class="tab === 'yaml' ? 'active' : ''" @click="tab = 'yaml'"><i>code</i><span>Full data (YAML)</span></a>
+  </div>
+
+  <form
+    hx-post="/web/pipeline/{{ job.id }}/validate"
+    hx-target="#editor-wrap"
+    hx-swap="outerHTML"
+    hx-indicator="#validate-spinner">
+    <input type="hidden" name="editor_mode" :value="tab" />
+
+    <!-- Form tab: primary fields -->
+    <div x-show="tab === 'form'">
+      <div class="grid">
+        <div class="s12 m6 field label border">
+          <input name="kv.urkundsperson.name" value="{{ job.data.urkundsperson.name }}" />
+          <label>Urkundsperson</label>
+        </div>
+        <div class="s12 m6 field label border">
+          <input name="kv.urkundsperson.kanon" value="{{ job.data.urkundsperson.kanon }}" />
+          <label>Kanton</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.ort" value="{{ job.data.ort }}" />
+          <label>Ort</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.datum" value="{{ job.data.datum }}" />
+          <label>Datum</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.protokoll_nr" value="{{ job.data.protokoll_nr }}" />
+          <label>Protokoll-Nr.</label>
+        </div>
+      </div>
+
+      <h6 class="small">Verkäuferschaft</h6>
+      <div class="grid">
+        <div class="s12 m4 field label border">
+          <select name="kv.verkaeufer.typ">
+            {% for t in party_types %}
+            <option value="{{ t }}" {% if job.data.verkaeufer.typ == t %}selected{% endif %}>{{ t or "—" }}</option>
+            {% endfor %}
+          </select>
+          <label>Typ</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.verkaeufer.einzel.vorname" value="{{ job.data.verkaeufer.einzel.vorname }}" />
+          <label>Vorname (einzel)</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.verkaeufer.einzel.name" value="{{ job.data.verkaeufer.einzel.name }}" />
+          <label>Name (einzel)</label>
+        </div>
+      </div>
+
+      <h6 class="small">Käuferschaft</h6>
+      <div class="grid">
+        <div class="s12 m4 field label border">
+          <select name="kv.kaeufer.typ">
+            {% for t in party_types %}
+            <option value="{{ t }}" {% if job.data.kaeufer.typ == t %}selected{% endif %}>{{ t or "—" }}</option>
+            {% endfor %}
+          </select>
+          <label>Typ</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.kaeufer.einzel.vorname" value="{{ job.data.kaeufer.einzel.vorname }}" />
+          <label>Vorname (einzel)</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.kaeufer.einzel.name" value="{{ job.data.kaeufer.einzel.name }}" />
+          <label>Name (einzel)</label>
+        </div>
+      </div>
+
+      <h6 class="small">Kaufobjekt</h6>
+      <div class="grid">
+        <div class="s12 m4 field label border">
+          <input name="kv.kaufobjekt.gemeinde" value="{{ job.data.kaufobjekt.gemeinde }}" />
+          <label>Gemeinde</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.kaufobjekt.grundstueck_nr" value="{{ job.data.kaufobjekt.grundstueck_nr }}" />
+          <label>Grundstück-Nr.</label>
+        </div>
+        <div class="s12 m4 field label border">
+          <input name="kv.kaufobjekt.egrid" value="{{ job.data.kaufobjekt.egrid }}" />
+          <label>E-GRID</label>
+        </div>
+        <div class="s12 m6 field label border">
+          <input name="kv.kaufobjekt.lage" value="{{ job.data.kaufobjekt.lage }}" />
+          <label>Lage</label>
+        </div>
+        <div class="s12 m6 field label border">
+          <input name="kv.kaufobjekt.flaeche" value="{{ job.data.kaufobjekt.flaeche }}" />
+          <label>Fläche</label>
+        </div>
+      </div>
+
+      <h6 class="small">Kaufpreis</h6>
+      <div class="grid">
+        <div class="s12 m6 field label border">
+          <input name="kv.kaufpreis.betrag" value="{{ job.data.kaufpreis.betrag }}" />
+          <label>Betrag (CHF)</label>
+        </div>
+        <div class="s12 m6 field label border">
+          <input name="kv.kaufpreis.betrag_ausgeschrieben" value="{{ job.data.kaufpreis.betrag_ausgeschrieben }}" />
+          <label>Betrag ausgeschrieben</label>
+        </div>
+      </div>
+
+      <p style="font-size: 0.8rem; color: var(--on-surface-variant);">
+        Form tab edits the primary fields. Use the YAML tab for parties detail,
+        Zahlung, Optionen, Grundbuch and Notariat.
+      </p>
+    </div>
+
+    <!-- YAML tab: full data -->
+    <div x-show="tab === 'yaml'" x-cloak>
+      <div class="field textarea border extra">
+        <textarea name="raw_yaml" style="font-family: monospace; min-height: 24rem;">{{ data_yaml }}</textarea>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--on-surface-variant);">
+        Full Kaufvertrag data. Submitting this tab replaces the entire data set.
+      </p>
+    </div>
+
+    <nav>
+      <button type="submit"><i>save</i><span>Validate &amp; save</span></button>
+      <progress id="validate-spinner" class="circle small htmx-indicator"></progress>
+    </nav>
+  </form>
+</article>
+</div>
