@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "firefox-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "firefox-devtools-mcp@latest",
+        "--headless",
+        "--viewport",
+        "1280x720",
+        "--start-url",
+        "http://localhost:5173"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    }
+  }
+}
