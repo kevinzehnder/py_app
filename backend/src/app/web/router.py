@@ -47,3 +47,21 @@ def dashboard(request: Request) -> HTMLResponse:
         "dashboard.html",
         _base_context(),
     )
+
+
+@router.post("/ai/hello", response_class=HTMLResponse)
+async def ai_hello(request: Request) -> HTMLResponse:
+    """Run the ai module's hello-world task and render the result partial.
+
+    The ai module is optional (requires the `ai` extra + Azure settings), so
+    import it lazily and surface any failure as a friendly partial.
+    """
+    context: dict = {}
+    try:
+        from app.ai import hello_world
+
+        context["greeting"] = await hello_world()
+    except Exception as exc:  # noqa: BLE001 — show any failure in the UI
+        context["error"] = str(exc)
+
+    return templates.TemplateResponse(request, "partials/ai_result.html", context)

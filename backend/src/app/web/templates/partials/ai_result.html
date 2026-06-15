@@ -1,0 +1,13 @@
+{% if error %}
+<div class="padding round border" style="border-color: var(--error); color: var(--on-error-container); background-color: var(--error-container);">
+  <i>error</i>
+  <span>AI call failed: {{ error }}</span>
+</div>
+{% else %}
+<div class="padding round border" style="border-color: var(--primary);">
+  <p style="margin: 0;"><b>{{ greeting.message }}</b></p>
+  <p style="margin: 0; font-size: 0.85rem; color: var(--on-surface-variant);">
+    language: {{ greeting.language }}
+  </p>
+</div>
+{% endif %}

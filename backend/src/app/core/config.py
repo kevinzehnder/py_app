@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     LOG_FORMAT: Literal["console", "json"] = "console"
 
+    MONGO_ENABLED: bool = True  # set false to run without MongoDB
     MONGO_CONNECTION_STRING: str = "mongodb://root:password@localhost:27017/"
     MONGO_DB_NAME: str = "admin_template"
     MONGO_SERVER_SELECTION_TIMEOUT_MS: int = 5_000
@@ -41,6 +42,12 @@ class Settings(BaseSettings):
     AUTH0_DOMAIN: str = ""      # e.g. "myapp.eu.auth0.com"
     AUTH0_AUDIENCE: str = ""
     AUTH0_ROLES_CLAIM: str = "roles"
+
+    # Azure AI Foundry / Azure OpenAI (ai module) — API-key auth
+    AZURE_OPENAI_ENDPOINT: str = ""          # e.g. "https://my-res.openai.azure.com/openai/v1/"
+    AZURE_OPENAI_API_KEY: str = ""
+    AZURE_OPENAI_API_VERSION: str = ""       # optional for legacy non-v1 endpoints
+    AZURE_OPENAI_DEPLOYMENT: str = ""        # deployment name, e.g. "gpt-5-mini"
 
     model_config = SettingsConfigDict(
         env_prefix="",

@@ -8,8 +8,22 @@
 
 <div class="grid">
   <article class="s12 m6 l4 round border">
-    <h6>Card</h6>
-    <p>Use the <code>.site</code> grid + beercss components to build pages.</p>
+    <h6>AI hello-world</h6>
+    <p>Trigger the Azure OpenAI call from the <code>ai</code> module.</p>
+    <nav>
+      <button
+        hx-post="/web/ai/hello"
+        hx-target="#ai-result"
+        hx-swap="innerHTML"
+        hx-indicator="#ai-spinner"
+        hx-disabled-elt="this"
+      >
+        <i>auto_awesome</i>
+        <span>Run</span>
+      </button>
+      <progress id="ai-spinner" class="circle small htmx-indicator"></progress>
+    </nav>
+    <div id="ai-result" style="margin-top: 0.75rem;"></div>
   </article>
   <article class="s12 m6 l4 round border">
     <h6>Theme</h6>

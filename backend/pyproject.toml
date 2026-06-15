@@ -28,6 +28,9 @@ dev = [
 azure = [
     "fastapi-azure-auth>=5.0",
 ]
+ai = [
+    "pydantic-ai-slim[openai]>=1.107.0",
+]
 
 [project.scripts]
 start = "app.__main__:main"

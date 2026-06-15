@@ -11,11 +11,13 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from app.auth.router import router as auth_router
-from app.items.router import router as items_router
+from app.core.config import get_settings
 from app.middlewares import LoggerMiddleware
 from app.schemas import KyException
 from app.web.router import STATIC_DIR as WEB_STATIC_DIR
 from app.web.router import router as web_router
+
+settings = get_settings()
 
 
 @asynccontextmanager
@@ -28,8 +30,15 @@ async def lifespan(app: fastapi.FastAPI) -> AsyncGenerator:
     provider = get_provider()
     await provider.startup()
     logger.info("auth provider ready", provider=type(provider).__name__)
+
+    if settings.MONGO_ENABLED:
+        db.ensure_connection()
+        db.create_collection_indices()
+
     yield
-    db.close_client()
+
+    if settings.MONGO_ENABLED:
+        db.close_client()
     logger.info("shutting down application")
 
 
@@ -45,9 +54,14 @@ app = fastapi.FastAPI(
     ],
 )
 
-app.include_router(items_router)
 app.include_router(auth_router)
 app.include_router(web_router)
+
+# The items example CRUD depends on MongoDB — only register it when enabled.
+if settings.MONGO_ENABLED:
+    from app.items.router import router as items_router
+
+    app.include_router(items_router)
 
 # Server-rendered frontend static assets (CSS/JS/themes/favicon).
 app.mount("/web/static", StaticFiles(directory=WEB_STATIC_DIR), name="web-static")
