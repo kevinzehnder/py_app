@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include "head.html" %}
+
+  <body x-data="{
+    showNavbar: false,
+    showSidebar: localStorage.getItem('showSidebar') === 'true' || false,
+    showModal: false,
+    loading: true,
+    toggleSidebar() {
+      this.showSidebar = !this.showSidebar;
+      localStorage.setItem('showSidebar', this.showSidebar);
+    }
+  }"
+        @open-modal="showModal = true; loading = false">
+    {% include "navbar.html" %}
+
+    <!-- site grid -->
+    <div class="site" x-data="snackbar">
+      {% include "header.html" %}
+      {% include "sidebar.html" %}
+      <main class="main-content">
+        <!-- modal framework (load content via HTMX into #modal-content) -->
+        {% include "modal.html" %}
+        {% block content %}{% endblock %}
+      </main>
+      <footer class="footer">
+        {% include "footer.html" %}
+      </footer>
+    </div>
+  </body>
+</html>

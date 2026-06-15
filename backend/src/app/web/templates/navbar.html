@@ -1,0 +1,35 @@
+<!-- Left drawer navigation. Replace links with real routes. -->
+<dialog
+  class="left no-padding"
+  :class="showNavbar ? 'active' : ''"
+  @click.outside="showNavbar = false"
+>
+  <nav class="drawer">
+    <header>
+      <nav>
+        <h5 class="max">{{ app_name | default("App") }}</h5>
+        <button class="transparent circle large" @click="showNavbar = false">
+          <i>close</i>
+        </button>
+      </nav>
+    </header>
+    <a href="/web">
+      <i>dashboard</i>
+      <span class="max">Dashboard</span>
+    </a>
+    <a href="#">
+      <i>list</i>
+      <span>Items</span>
+    </a>
+    <a href="#">
+      <i>settings</i>
+      <span>Settings</span>
+    </a>
+    <hr />
+    <label>Section</label>
+    <a href="#">
+      <i>fiber_manual_record</i>
+      <span>Link</span>
+    </a>
+  </nav>
+</dialog>

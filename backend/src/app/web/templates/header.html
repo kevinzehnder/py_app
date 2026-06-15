@@ -1,0 +1,15 @@
+<header class="title primary-container">
+  <nav>
+    <button class="circle transparent" @click="toggleSidebar()" @click.stop>
+      <i>menu</i>
+    </button>
+    <h5 class="center-align">{{ app_name | default("App") }}</h5>
+    <div class="max"></div>
+    <div class="htmx-indicator">
+      <progress class="circle small"></progress>
+    </div>
+    <button class="circle transparent" @click="$store.settings.toggleMode()">
+      <i>light_mode</i>
+    </button>
+  </nav>
+</header>

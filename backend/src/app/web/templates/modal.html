@@ -1,0 +1,27 @@
+<!-- Modal Overlay -->
+<div
+  :class="showModal ? 'active' : ''"
+  class="overlay"
+  @click="showModal = false"
+  x-transition.opacity
+></div>
+
+<!-- Modal Dialog. Load content into #modal-content via HTMX. -->
+<dialog
+  :class="showModal ? 'active' : ''"
+  class="modal large-elevate"
+  style="max-width: 1200px; max-height: 95vh; width: 95vw; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+  @keydown.escape.prevent.stop="showModal = false"
+  x-trap.noscroll.inert="showModal"
+  role="dialog"
+  aria-modal="true"
+  x-id="['modal-title']"
+  :aria-labelledby="$id('modal-title')"
+  x-transition
+>
+  <!-- Loading State -->
+  <progress class="circle" x-show="loading" id="spinner"></progress>
+
+  <!-- Modal Content -->
+  <div x-show="!loading" id="modal-content"></div>
+</dialog>

@@ -1,0 +1,50 @@
+body.dark {
+  --primary: #7aa2f7; /* Tokyo Night Blue */
+  --on-primary: #1a1b26; /* Tokyo Night Background */
+  --primary-container: #2a3a5b; /* Darker version of Tokyo Night Blue */
+  --on-primary-container: #a9b1d6; /* Tokyo Night Light Blue */
+
+  --secondary: #bb9af7; /* Tokyo Night Purple */
+  --on-secondary: #1a1b26; /* Tokyo Night Background */
+  --secondary-container: #443f5b; /* Darker version of Tokyo Night Purple */
+  --on-secondary-container: #c0caf5; /* Tokyo Night Lighter Blue */
+
+  --tertiary: #ff9e64; /* Tokyo Night Orange */
+  --on-tertiary: #1a1b26; /* Tokyo Night Background */
+  --tertiary-container: #553a3c; /* Darker version of Tokyo Night Orange */
+  --on-tertiary-container: #e0af68; /* Tokyo Night Lighter Orange */
+
+  --error: #f7768e; /* Tokyo Night Red */
+  --on-error: #1a1b26; /* Tokyo Night Background */
+  --error-container: #5b2c37; /* Darker version of Tokyo Night Red */
+  --on-error-container: #f7768e; /* Tokyo Night Red */
+
+  --background: #1a1b26; /* Tokyo Night Background */
+  --on-background: #c0caf5; /* Tokyo Night Light Blue */
+
+  --surface: #1f2335; /* Tokyo Night Surface */
+  --on-surface: #c0caf5; /* Tokyo Night Light Blue */
+
+  --surface-variant: #3b4261; /* Tokyo Night Darker Surface */
+  --on-surface-variant: #a9b1d6; /* Tokyo Night Lighter Surface */
+
+  --outline: #565f89; /* Tokyo Night Dark Outline */
+  --outline-variant: #444b6a; /* Tokyo Night Lighter Outline */
+
+  --shadow: #000000; /* Standard black shadow */
+  --scrim: #000000; /* Standard black scrim */
+
+  --inverse-surface: #c0caf5; /* Tokyo Night Light Blue */
+  --inverse-on-surface: #1a1b26; /* Tokyo Night Background */
+
+  --inverse-primary: #7aa2f7; /* Tokyo Night Blue */
+
+  --surface-dim: #24283b; /* Tokyo Night Dim Surface */
+  --surface-bright: #1f2335; /* Tokyo Night Bright Surface */
+
+  --surface-container-lowest: #1a1b26; /* Tokyo Night Background */
+  --surface-container-low: #1f2335; /* Tokyo Night Surface */
+  --surface-container: #24283b; /* Tokyo Night Dim Surface */
+  --surface-container-high: #2f344e; /* Tokyo Night Darker Surface */
+  --surface-container-highest: #3b4261; /* Tokyo Night Darkest Surface */
+}

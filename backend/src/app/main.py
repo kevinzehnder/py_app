@@ -1,24 +1,21 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-# Configure logging before any app imports — ensures correct format in all
-# processes, including uvicorn reload workers that never run __main__.py.
-from app.core.logs import configure_logging, get_log_format_from_env, get_log_level_from_env
-
-configure_logging(format=get_log_format_from_env(), log_level=get_log_level_from_env())
-
 import fastapi
 import structlog
 from fastapi import Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from app.auth.router import router as auth_router
 from app.items.router import router as items_router
 from app.middlewares import LoggerMiddleware
 from app.schemas import KyException
+from app.web.router import STATIC_DIR as WEB_STATIC_DIR
+from app.web.router import router as web_router
 
 
 @asynccontextmanager
@@ -50,6 +47,10 @@ app = fastapi.FastAPI(
 
 app.include_router(items_router)
 app.include_router(auth_router)
+app.include_router(web_router)
+
+# Server-rendered frontend static assets (CSS/JS/themes/favicon).
+app.mount("/web/static", StaticFiles(directory=WEB_STATIC_DIR), name="web-static")
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,0 +1,252 @@
+/* beercss */
+@import "https://cdn.jsdelivr.net/npm/beercss@3.11.33/dist/cdn/beer.min.css";
+
+/* custom fonts */
+@import "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap";
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Oswald:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=New+Amsterdam&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Oswald&display=swap");
+
+/* themes (light/dark pair, selected via body.light / body.dark) */
+@import url("/web/static/themes/light.css");
+@import url("/web/static/themes/dark.css");
+
+:root {
+  --font: "Roboto";
+}
+
+html {
+  font-family: sans-serif;
+}
+
+body {
+  margin: 0px;
+}
+
+h5 {
+  font-family: "New Amsterdam", sans-serif;
+}
+
+/* ---- site grid: header (title) spans top, sidebar + main below ---- */
+.site {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "title title"
+    "sidebar main"
+    "footer footer";
+}
+
+.main-content {
+  padding: 2rem;
+  grid-area: main;
+  display: grid;
+  gap: 0.3rem;
+  /* pack content at the top instead of stretching rows to fill */
+  align-content: start;
+  /* allow the 1fr row to shrink so tall content scrolls inside main
+     instead of pushing the whole page past 100vh */
+  min-height: 0;
+  overflow: auto;
+}
+
+.sidebar {
+  width: auto;
+  padding: 1rem;
+  display: grid;
+  align-content: start;
+  gap: 0.2rem;
+  grid-area: sidebar;
+  background-color: var(--primary-container);
+}
+
+.title {
+  grid-area: title;
+  background-color: var(--primary-container) !important;
+}
+
+/* ---- modal + overlay framework ---- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
+.modal {
+  display: grid;
+  border-radius: 0;
+  top: 30%;
+  display: none;
+}
+
+.modal.active {
+  display: grid;
+}
+
+.button-foldout {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.button-foldout button {
+  grid-column-start: 2;
+}
+
+.accordion-title {
+  font-family: "New Amsterdam", sans-serif;
+  font-size: 1.2rem;
+  user-select: none;
+}
+
+/* ---- htmx loading indicator ---- */
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+/* ---- table row hover ---- */
+tr:hover {
+  background-color: var(--surface-container-highest);
+}
+
+thead tr:hover {
+  background-color: inherit;
+  box-shadow: none;
+}
+
+/* ---- footer ---- */
+.footer {
+  grid-area: footer;
+  background-color: var(--primary-container);
+}
+
+.footer-content {
+  padding: 1rem;
+}
+
+/* ---- reusable sidebar settings / form controls ---- */
+.settings-section {
+  margin-top: 1rem;
+  border-top: 1px solid var(--outline-variant);
+  padding-top: 0.5rem;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--on-surface);
+  padding: 0.5rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.settings-panel-sidebar {
+  background-color: var(--surface-container-low);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.setting-item-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.setting-item-sidebar label {
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--on-surface);
+}
+
+.setting-item-sidebar select {
+  padding: 0.4rem;
+  border: 1px solid var(--outline);
+  border-radius: 0.25rem;
+  background-color: var(--surface);
+  color: var(--on-surface);
+  font-size: 0.8rem;
+}
+
+.slider-container-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-container-sidebar input[type="range"] {
+  flex: 1;
+  height: 4px;
+  background: var(--outline-variant);
+  border-radius: 2px;
+  outline: none;
+}
+
+.slider-container-sidebar input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  background: var(--primary);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.slider-value-sidebar {
+  min-width: 40px;
+  font-size: 0.7rem;
+  color: var(--on-surface-variant);
+  text-align: right;
+}
+
+.toggle-container-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.toggle-container-sidebar .switch {
+  margin: 0;
+}
+
+.toggle-status {
+  font-size: 0.7rem;
+  color: var(--on-surface-variant);
+  font-weight: 500;
+}
+
+.reset-button-sidebar {
+  background-color: var(--error-container);
+  color: var(--on-error-container);
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease;
+  margin-top: 0.5rem;
+}
+
+.reset-button-sidebar:hover {
+  background-color: var(--error);
+  color: var(--on-error);
+}

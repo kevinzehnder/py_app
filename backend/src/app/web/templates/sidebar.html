@@ -1,0 +1,24 @@
+<!-- Collapsible sidebar. Toggled by the header menu button (showSidebar),
+     persisted to localStorage. Replace the placeholder panels below. -->
+<div class="sidebar padding" x-show="showSidebar" x-transition.opacity.duration.40ms>
+  <article>
+    <b>Panel</b>
+    <p style="font-size: 0.85rem; color: var(--on-surface-variant);">
+      Sidebar content goes here.
+    </p>
+  </article>
+
+  <div class="divider"></div>
+
+  <!-- Example: trigger a modal whose content is loaded via HTMX
+  <button
+    class="border"
+    hx-get="/web/some-modal"
+    hx-target="#modal-content"
+    hx-swap="innerHTML"
+    @click="$dispatch('open-modal')">
+    <i>open_in_new</i>
+    <span>Open modal</span>
+  </button>
+  -->
+</div>

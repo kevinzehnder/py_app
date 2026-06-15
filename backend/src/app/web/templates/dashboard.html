@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard · {{ app_name | default("App") }}{% endblock %}
+
+{% block content %}
+<h4>Dashboard</h4>
+<p>Server-rendered template shell (Jinja2 + HTMX + Alpine + beercss).</p>
+
+<div class="grid">
+  <article class="s12 m6 l4 round border">
+    <h6>Card</h6>
+    <p>Use the <code>.site</code> grid + beercss components to build pages.</p>
+  </article>
+  <article class="s12 m6 l4 round border">
+    <h6>Theme</h6>
+    <p>Toggle dark/light with the header button — persisted via localStorage.</p>
+  </article>
+  <article class="s12 m6 l4 round border">
+    <h6>Sidebar</h6>
+    <p>Toggle the sidebar with the header menu button.</p>
+  </article>
+</div>
+{% endblock %}
